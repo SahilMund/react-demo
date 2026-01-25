@@ -12,6 +12,10 @@ import Review from './components/Review';
 import FormHandler from './components/FormHandler';
 import Timer from './components/Timer';
 import DataFetcher from './components/DataFetcher';
+import ReactDropdown from './components/ReactDropdown';
+import PostDetails from './components/PostDetails';
+import { Route, Routes } from 'react-router-dom';
+import CommentDetails from './components/CommentDetails';
 
 const postInfo = [{
   id: 1,
@@ -57,22 +61,22 @@ function App() {
     document.title = `ecommerce-app (${count})`
   }, [count])
 
-  useEffect(() => {
-    const handleResize = () => {
-      // console.log(window.innerWidth, window.innerHeight);
-      setWidth(window.innerWidth)
-    }
+  // useEffect(() => {
+  //   const handleResize = () => {
+  //     // console.log(window.innerWidth, window.innerHeight);
+  //     setWidth(window.innerWidth)
+  //   }
 
-    //my app is not supproted for mboile
+  //   //my app is not supproted for mboile
 
 
 
-    window.addEventListener('resize', handleResize);
+  //   window.addEventListener('resize', handleResize);
 
-    return () => {
-      window.removeEventListener('resize', handleResize)
-    }
-  })
+  //   return () => {
+  //     window.removeEventListener('resize', handleResize)
+  //   }
+  // })
 
 
   const handleDelete = (postId) => {
@@ -123,11 +127,106 @@ function App() {
 
   }
 
+  // const getCurrentTime = () => {
+  //   return `${hour} : ${min} : ${sec}`
+  // }
 
+  // const [hour, setHour] = useState(null)
+  // const [min, setMin] = useState(null)
+  // const [sec, setSec] = useState(null)
+  // const [loading, setLoading] = useState(true)
+
+  // useEffect(() => {
+
+  //   const timer = setInterval(() => {
+  //     const dt = new Date();
+  //     setHour(dt.getHours())
+  //     setMin(dt.getMinutes())
+  //     setSec(dt.getSeconds())
+  //     setLoading(false)
+  //     console.log("intervalrunning")
+  //   }, 1000)
+  //   return () => (clearInterval(timer))
+  // }, [])
+  // useEffect(() => {
+  //   setTimeout(()=>{
+  //     setHour(dt.getHours())
+  //     setMin(dt.getMinutes())
+  //     setSec(dt.getSeconds())
+  //     setLoading(false)
+  //   },1000)
+  // },[sec])
+
+  // setInterval(() => {
+  //   setHour(dt.getHours())
+  //   setMin(dt.getMinutes())
+  //   setSec(dt.getSeconds())
+  //   setLoading(false)
+  // }, 1000)
+
+  const [input, setInput] = useState(() => (JSON.parse(localStorage.getItem("inputValue"))) || "")
+  const [mode, setMode] = useState(
+    "debounce"
+  )
+  const [last, setLast] = useState(0)
+  function autoSavedebounce(e) {
+    setInput(e.target.value)
+    console.log(e.target.value)
+    const timerId = setTimeout(() => {
+      localStorage.setItem("inputValue", JSON.stringify(e.target.value))
+    }, 3500)
+    return () => (
+      clearTimeout(timerId)
+    )
+  }
+  function autoSaveTrotling(e) {
+    setInput(e.target.value)
+    let now = Date.now()
+    console.log(now - last)
+    if (now - last >= 1000) {
+      localStorage.setItem("inputValue", JSON.stringify(e.target.value))
+      setLast(now)
+    }
+
+
+  }
+
+  // function autoSave2(){
+  //   console.log("save2")
+  // }
+  // function autoSave3(){
+  //   console.log("save3")
+  // }
 
   return (
     <>
-      <FormHandler />
+      <Navbar links={[{ label: "PostDetails", path: '/posts' },
+      { label: "Hello", path: '/' },]} variant="secondary" />
+
+      <Routes>
+        <Route path="/" element={<h1>Hello</h1>} />
+        <Route path="/posts" element={<PostDetails />} />
+        <Route path="/comments/:postId" element={<CommentDetails />} />
+        <Route path="*" element={<h1>Page not found</h1>} />
+      </Routes>
+
+      {/* <input type="text" value={input} onChange={autoSaveTrotling} />
+      <input type="radio" />
+      <input type="radio"/> */}
+
+
+
+      {/* <PostDetails /> */}
+
+      {/* <input type="text" value={input} onChange={() => autoSave2()} /> */}
+      {/* <input type="text" value={input} onChange={autoSave3()} /> */}
+
+
+      {/* {
+        !loading && <span>{getCurrentTime()}</span>
+      } */}
+      {/* <ReactDropdown /> */}
+      {/* <FormHandler /> */}
       {/* {isTimerActive ? <Timer /> : <p>timer is not active</p>
       } */}
 

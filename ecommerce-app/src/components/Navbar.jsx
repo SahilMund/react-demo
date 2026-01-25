@@ -1,3 +1,4 @@
+import { Link, NavLink } from 'react-router-dom';
 import viteLogo from '/vite.svg'
 
 
@@ -9,7 +10,11 @@ function Navbar({ links, logo = viteLogo, variant = "primary" }) {
 
         <ul className="flex">
             {links.map(link =>
-                (<li key={link}>{link}</li>)
+            (<NavLink to={link.path}
+                className={({ isActive, isPending }) =>
+                    isPending ? "pending" : isActive ? "active" : ""
+                }
+            ><li key={link.label}>{link.label}</li></NavLink>)
             )}
         </ul>
     </div>
