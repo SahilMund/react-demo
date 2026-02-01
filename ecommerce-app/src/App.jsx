@@ -1,46 +1,70 @@
-
-import { useEffect, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import GalleryContainer from './components/GalleryContainer';
-import PageLayout from './components/PageLayout';
+import { useEffect, useState } from "react";
+import reactLogo from "./assets/react.svg";
+import viteLogo from "/vite.svg";
+import "./App.css";
+import Navbar from "./components/Navbar";
+import Hero from "./components/Hero";
+import GalleryContainer from "./components/GalleryContainer";
+import PageLayout from "./components/PageLayout";
 import { reviewLists } from "./data/reviews";
-import Review from './components/Review';
-import FormHandler from './components/FormHandler';
-import Timer from './components/Timer';
-import DataFetcher from './components/DataFetcher';
-import ReactDropdown from './components/ReactDropdown';
-import PostDetails from './components/PostDetails';
-import { Route, Routes } from 'react-router-dom';
-import CommentDetails from './components/CommentDetails';
+import Review from "./components/Review";
+import FormHandler from "./components/FormHandler";
+import Timer from "./components/Timer";
+import DataFetcher from "./components/DataFetcher";
+import ReactDropdown from "./components/ReactDropdown";
+import PostDetails from "./components/PostDetails";
+import { Route, Routes } from "react-router-dom";
+import CommentDetails from "./components/CommentDetails";
+import ContextDemo from "./components/ContextDemo";
+import { useUser } from "./context/Context";
 
-const postInfo = [{
-  id: 1,
-  title: "shutterstock 1",
-  desc: 'lorem ipsum abcde',
-  url: ""
-},
-{
-  id: 2,
-  title: "shutterstock 2",
-  desc: 'lorem ipsum abcde',
-  url: "https://imgs.search.brave.com/Ce-oNGlucFUmvnSYAFMnxSuYPf1T6f8HvFQzgvWzOxg/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly93d3cu/c3RvY2twaG90b3Nl/Y3JldHMuY29tL3dw/LWNvbnRlbnQvdXBs/b2Fkcy8yMDI0LzEx/L2hvdy10by1wdXJj/aGFzZS1zaHV0dGVy/c3RvY2staW1hZ2Vz/LmpwZw"
-},
-{
-  id: 3,
-  title: "shutterstock 3",
-  desc: 'lorem ipsum abcde',
-  url: "https://imgs.search.brave.com/Ce-oNGlucFUmvnSYAFMnxSuYPf1T6f8HvFQzgvWzOxg/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly93d3cu/c3RvY2twaG90b3Nl/Y3JldHMuY29tL3dw/LWNvbnRlbnQvdXBs/b2Fkcy8yMDI0LzEx/L2hvdy10by1wdXJj/aGFzZS1zaHV0dGVy/c3RvY2staW1hZ2Vz/LmpwZw"
-},
-{
-  id: 4,
-  title: "shutterstock 4",
-  desc: 'lorem ipsum abcde',
-  url: "https://imgs.search.brave.com/Ce-oNGlucFUmvnSYAFMnxSuYPf1T6f8HvFQzgvWzOxg/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly93d3cu/c3RvY2twaG90b3Nl/Y3JldHMuY29tL3dw/LWNvbnRlbnQvdXBs/b2Fkcy8yMDI0LzEx/L2hvdy10by1wdXJj/aGFzZS1zaHV0dGVy/c3RvY2staW1hZ2Vz/LmpwZw"
-}]
+const postInfo = [
+  {
+    id: 1,
+    title: "shutterstock 1",
+    desc: "lorem ipsum abcde",
+    url: "",
+  },
+  {
+    id: 2,
+    title: "shutterstock 2",
+    desc: "lorem ipsum abcde",
+    url: "https://imgs.search.brave.com/Ce-oNGlucFUmvnSYAFMnxSuYPf1T6f8HvFQzgvWzOxg/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly93d3cu/c3RvY2twaG90b3Nl/Y3JldHMuY29tL3dw/LWNvbnRlbnQvdXBs/b2Fkcy8yMDI0LzEx/L2hvdy10by1wdXJj/aGFzZS1zaHV0dGVy/c3RvY2staW1hZ2Vz/LmpwZw",
+  },
+  {
+    id: 3,
+    title: "shutterstock 3",
+    desc: "lorem ipsum abcde",
+    url: "https://imgs.search.brave.com/Ce-oNGlucFUmvnSYAFMnxSuYPf1T6f8HvFQzgvWzOxg/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly93d3cu/c3RvY2twaG90b3Nl/Y3JldHMuY29tL3dw/LWNvbnRlbnQvdXBs/b2Fkcy8yMDI0LzEx/L2hvdy10by1wdXJj/aGFzZS1zaHV0dGVy/c3RvY2staW1hZ2Vz/LmpwZw",
+  },
+  {
+    id: 4,
+    title: "shutterstock 4",
+    desc: "lorem ipsum abcde",
+    url: "https://imgs.search.brave.com/Ce-oNGlucFUmvnSYAFMnxSuYPf1T6f8HvFQzgvWzOxg/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly93d3cu/c3RvY2twaG90b3Nl/Y3JldHMuY29tL3dw/LWNvbnRlbnQvdXBs/b2Fkcy8yMDI0LzEx/L2hvdy10by1wdXJj/aGFzZS1zaHV0dGVy/c3RvY2staW1hZ2Vz/LmpwZw",
+  },
+];
+
+const HomePage = () => {
+  const [input, setInput] = useState("");
+  const { setUser } = useUser();
+
+  const handleChange = (e) => {
+    setInput(e.target.value);
+    setUser((prev) => ({ ...prev, name: e.target.value }));
+  };
+  return (
+    <>
+      <h1>Hello</h1>
+      <input
+        type="text"
+        placeholder="enter name"
+        onChange={handleChange}
+        value={input}
+      />
+    </>
+  );
+};
 
 function App() {
   const [count, setCount] = useState(2);
@@ -52,14 +76,12 @@ function App() {
     name: "John",
     age: 25,
 
-
-    /// 20 diff fields 
+    /// 20 diff fields
   });
 
-
   useEffect(() => {
-    document.title = `ecommerce-app (${count})`
-  }, [count])
+    document.title = `ecommerce-app (${count})`;
+  }, [count]);
 
   // useEffect(() => {
   //   const handleResize = () => {
@@ -69,8 +91,6 @@ function App() {
 
   //   //my app is not supproted for mboile
 
-
-
   //   window.addEventListener('resize', handleResize);
 
   //   return () => {
@@ -78,11 +98,10 @@ function App() {
   //   }
   // })
 
-
   const handleDelete = (postId) => {
-    const filteredPosts = postInfo.filter(p => p.id !== postId)
-    setPosts(filteredPosts)
-  }
+    const filteredPosts = postInfo.filter((p) => p.id !== postId);
+    setPosts(filteredPosts);
+  };
 
   const handleUpdateUser = () => {
     const name = prompt("Enter user name");
@@ -100,14 +119,14 @@ function App() {
     setUser((prev) => {
       return {
         ...prev,
-        name
-      }
-    })
+        name,
+      };
+    });
 
     // 1. it will check for the referetial equality
     // 2. then it will update the state
     // 3. it will re-redner your component
-  }
+  };
 
   //flushSync
   const handleCounter = () => {
@@ -115,17 +134,16 @@ function App() {
     // // setCount(count + 1) // 3+1
     // // setCount(count + 1)//3+1
 
-    setCount(prev => prev + 1) // 1
+    setCount((prev) => prev + 1); // 1
     setUser((prev) => {
       return {
         ...prev,
-        name: "ABCDS"
-      }
-    }) //1
+        name: "ABCDS",
+      };
+    }); //1
     // setCount(prev => prev + 1)
     // setCount(prev => prev + 1)
-
-  }
+  };
 
   // const getCurrentTime = () => {
   //   return `${hour} : ${min} : ${sec}`
@@ -164,31 +182,27 @@ function App() {
   //   setLoading(false)
   // }, 1000)
 
-  const [input, setInput] = useState(() => (JSON.parse(localStorage.getItem("inputValue"))) || "")
-  const [mode, setMode] = useState(
-    "debounce"
-  )
-  const [last, setLast] = useState(0)
+  const [input, setInput] = useState(
+    () => JSON.parse(localStorage.getItem("inputValue")) || "",
+  );
+  const [mode, setMode] = useState("debounce");
+  const [last, setLast] = useState(0);
   function autoSavedebounce(e) {
-    setInput(e.target.value)
-    console.log(e.target.value)
+    setInput(e.target.value);
+    console.log(e.target.value);
     const timerId = setTimeout(() => {
-      localStorage.setItem("inputValue", JSON.stringify(e.target.value))
-    }, 3500)
-    return () => (
-      clearTimeout(timerId)
-    )
+      localStorage.setItem("inputValue", JSON.stringify(e.target.value));
+    }, 3500);
+    return () => clearTimeout(timerId);
   }
   function autoSaveTrotling(e) {
-    setInput(e.target.value)
-    let now = Date.now()
-    console.log(now - last)
+    setInput(e.target.value);
+    let now = Date.now();
+    console.log(now - last);
     if (now - last >= 1000) {
-      localStorage.setItem("inputValue", JSON.stringify(e.target.value))
-      setLast(now)
+      localStorage.setItem("inputValue", JSON.stringify(e.target.value));
+      setLast(now);
     }
-
-
   }
 
   // function autoSave2(){
@@ -200,27 +214,32 @@ function App() {
 
   return (
     <>
-      <Navbar links={[{ label: "PostDetails", path: '/posts' },
-      { label: "Hello", path: '/' },]} variant="secondary" />
+      <Navbar
+        links={[
+          { label: "PostDetails", path: "/posts" },
+          { label: "Hello", path: "/" },
+          { label: "context", path: "/context" },
+        ]}
+        variant="secondary"
+      />
 
       <Routes>
-        <Route path="/" element={<h1>Hello</h1>} />
+        <Route path="/" element={<HomePage />} />
         <Route path="/posts" element={<PostDetails />} />
         <Route path="/comments/:postId" element={<CommentDetails />} />
         <Route path="*" element={<h1>Page not found</h1>} />
+
+        <Route path="/context" element={<ContextDemo />} />
       </Routes>
 
       {/* <input type="text" value={input} onChange={autoSaveTrotling} />
       <input type="radio" />
       <input type="radio"/> */}
 
-
-
       {/* <PostDetails /> */}
 
       {/* <input type="text" value={input} onChange={() => autoSave2()} /> */}
       {/* <input type="text" value={input} onChange={autoSave3()} /> */}
-
 
       {/* {
         !loading && <span>{getCurrentTime()}</span>
@@ -306,10 +325,8 @@ function App() {
         {count > 5 && <p>Count is greater than 5</p>}
         {count > 10 && <p>Count is greater than 10</p>}
       </div> */}
-
-
     </>
-  )
+  );
 }
 
-export default App
+export default App;

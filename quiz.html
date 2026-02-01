@@ -1,0 +1,1019 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Quiz — View Only (Prominent Timer)</title>
+    <style>
+      :root {
+        --bg: #071025;
+        --card: #091427;
+        --accent: #06b6d4;
+        --accent-2: #7c3aed;
+        --muted: #94a3b8;
+        --glass: rgba(255, 255, 255, 0.03);
+        --danger: #ff6b6b;
+        color-scheme: dark;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family:
+          Inter,
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          "Helvetica Neue",
+          Arial;
+        background: linear-gradient(180deg, var(--bg) 0%, #071827 100%);
+        color: #e6eef6;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+      }
+      .container {
+        width: 1000px;
+        max-width: 100%;
+        background:
+          radial-gradient(
+            800px 240px at 10% 10%,
+            rgba(6, 182, 212, 0.03),
+            transparent 10%
+          ),
+          var(--card);
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 10px 30px rgba(2, 6, 23, 0.7);
+        position: relative;
+      }
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 10px;
+      }
+      h1 {
+        font-size: 18px;
+        margin: 0;
+      }
+      .small {
+        font-size: 13px;
+        color: var(--muted);
+      }
+
+      .card {
+        display: flex;
+        gap: 18px;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.01),
+          rgba(255, 255, 255, 0.01)
+        );
+        border-radius: 10px;
+        padding: 18px;
+        align-items: stretch;
+      }
+
+      .sidebar {
+        width: 260px;
+        min-width: 200px;
+        border-radius: 8px;
+        padding: 12px;
+        background: var(--glass);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .progress {
+        height: 10px;
+        background: rgba(255, 255, 255, 0.04);
+        border-radius: 999px;
+        overflow: hidden;
+      }
+      .progress > i {
+        display: block;
+        height: 100%;
+        background: linear-gradient(90deg, var(--accent), var(--accent-2));
+        width: 0%;
+        transition: width 0.25s linear;
+      }
+
+      .question-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      /* PROMINENT TIMER (placed at top of question area) */
+      .big-timer-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 10px;
+        border-radius: 8px;
+        background: linear-gradient(
+          90deg,
+          rgba(6, 182, 212, 0.03),
+          rgba(124, 58, 237, 0.02)
+        );
+        border: 1px solid rgba(255, 255, 255, 0.03);
+      }
+      .big-timer {
+        font-weight: 900;
+        font-size: 48px;
+        line-height: 1;
+        letter-spacing: 0.5px;
+        color: transparent;
+        background: linear-gradient(90deg, var(--accent), var(--accent-2));
+        -webkit-background-clip: text;
+        background-clip: text;
+        display: inline-block;
+        min-width: 220px;
+        text-align: left;
+        transition: transform 0.12s ease;
+      }
+      .big-timer.pulse {
+        animation: pulse 1.2s infinite;
+      }
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.03);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+      .big-timer.warn {
+        background: linear-gradient(90deg, var(--danger), #ff9a9a);
+        -webkit-background-clip: text;
+        background-clip: text;
+      }
+      .timer-sub {
+        color: var(--muted);
+        font-size: 13px;
+        text-align: right;
+      }
+
+      .question {
+        font-size: 26px;
+        line-height: 1.25;
+        margin: 0;
+        white-space: pre-wrap;
+        max-height: 50vh;
+        overflow: auto;
+        padding-right: 6px;
+      }
+
+      pre.code {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.01),
+          rgba(255, 255, 255, 0.02)
+        );
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        padding: 12px;
+        border-radius: 8px;
+        overflow: auto;
+        font-family:
+          ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono",
+          "Courier New", monospace;
+        font-size: 13px;
+        color: #dbeafe;
+        margin: 8px 0 0 0;
+        white-space: pre-wrap;
+      }
+      .code .line-number {
+        display: inline-block;
+        width: 30px;
+        color: var(--muted);
+        user-select: none;
+      }
+
+      .options {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 10px;
+      }
+      .option {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        padding: 10px 12px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.01);
+        border: 1px solid rgba(255, 255, 255, 0.03);
+      }
+      .option .letter {
+        width: 22px;
+        font-weight: 800;
+        color: var(--muted);
+      }
+      .option .text {
+        font-weight: 600;
+      }
+      .option.correct {
+        background: linear-gradient(
+          90deg,
+          rgba(6, 182, 212, 0.06),
+          rgba(124, 58, 237, 0.03)
+        );
+        border-color: rgba(6, 182, 212, 0.18);
+      }
+
+      .controls {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        margin-top: auto;
+      }
+      button {
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        color: inherit;
+        padding: 10px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.14s;
+      }
+      button.primary {
+        background: linear-gradient(90deg, var(--accent), var(--accent-2));
+        color: #001018;
+        border: 0;
+        box-shadow: 0 8px 22px rgba(6, 182, 212, 0.09);
+      }
+      button:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+
+      .overlay {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(2, 6, 23, 0.8);
+        border-radius: 12px;
+        gap: 12px;
+        flex-direction: column;
+        color: #ffd7d7;
+        font-weight: 800;
+        font-size: 22px;
+        backdrop-filter: blur(4px);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s;
+      }
+      .overlay.show {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .answers-view {
+        margin-top: 16px;
+        border-radius: 10px;
+        padding: 14px;
+        background: rgba(255, 255, 255, 0.02);
+        max-height: 60vh;
+        overflow: auto;
+      }
+      .answer-item {
+        margin-bottom: 12px;
+      }
+      .answer-q {
+        font-weight: 700;
+        margin-bottom: 6px;
+      }
+      .answer-correct {
+        color: #b9f6ca;
+        font-weight: 700;
+        margin-left: 8px;
+      }
+      footer {
+        margin-top: 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      /* small answer popup */
+      .popup {
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        min-width: 360px;
+        max-width: 90%;
+        background: var(--card);
+        padding: 18px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+        display: none;
+        z-index: 60;
+      }
+      .popup.show {
+        display: block;
+      }
+      .popup h4 {
+        margin: 0 0 8px 0;
+      }
+      .popup .body {
+        max-height: 50vh;
+        overflow: auto;
+        color: #e6f8ea;
+        font-weight: 600;
+      }
+      .popup .actions {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+        margin-top: 12px;
+      }
+
+      @media (max-width: 900px) {
+        .container {
+          padding: 12px;
+        }
+        .card {
+          flex-direction: column;
+        }
+        .sidebar {
+          width: 100%;
+        }
+        .big-timer {
+          font-size: 36px;
+          min-width: 160px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container" role="region" aria-label="Quiz slider">
+      <header>
+        <h1>Quiz — View Only</h1>
+        <div class="small">Accessible: use keyboard arrows for navigation.</div>
+      </header>
+
+      <div class="card" aria-live="polite">
+        <aside class="sidebar" aria-hidden="false">
+          <div class="meta">
+            Question <strong id="index">1</strong> of
+            <strong id="total">1</strong>
+          </div>
+          <div class="progress" aria-hidden="false">
+            <i id="progressBar"></i>
+          </div>
+          <div class="small">
+            Tip: Timer restarts each question. Use ← → or buttons to navigate.
+          </div>
+        </aside>
+
+        <main class="question-area">
+          <!-- Prominent timer, placed at top of question area -->
+          <div class="big-timer-wrap" aria-hidden="false">
+            <div>
+              <div id="bigTimer" class="big-timer pulse">100s</div>
+              <div class="timer-sub" id="timerSub">Time remaining</div>
+            </div>
+            <div class="small" id="status">Status: running</div>
+          </div>
+
+          <h2 class="question" id="question">Loading…</h2>
+
+          <!-- Code block container -->
+          <div id="codeContainer" aria-hidden="true"></div>
+
+          <!-- Options (display only) -->
+          <div id="optionsContainer"></div>
+
+          <!-- Controls -->
+          <div class="controls" style="justify-content: space-between">
+            <div style="display: flex; gap: 8px">
+              <button id="prevBtn" aria-label="Previous question">
+                &larr; Previous
+              </button>
+              <button id="nextBtn" class="primary" aria-label="Next question">
+                Next &rarr;
+              </button>
+            </div>
+
+            <div style="display: flex; gap: 8px; align-items: center">
+              <a
+                href="#"
+                id="seeAnswers"
+                style="display: none; color: var(--accent); font-weight: 700"
+                >See Answers</a
+              >
+              <!-- Per-question display answer link -->
+              <a
+                href="#"
+                id="displayAnswerLink"
+                style="color: var(--accent); font-weight: 700"
+                >Display Answer</a
+              >
+            </div>
+          </div>
+        </main>
+      </div>
+
+      <!-- Answers view -->
+      <section class="answers-view" id="answersView" hidden aria-hidden="true">
+        <h3 style="margin-top: 0">Answers</h3>
+        <div id="answersList"></div>
+        <div style="margin-top: 8px">
+          <button id="closeAnswers">Close Answers</button>
+        </div>
+      </section>
+
+      <!-- Overlay used for Time-Up with actions -->
+      <div
+        class="overlay"
+        id="overlay"
+        role="dialog"
+        aria-modal="true"
+        aria-hidden="true"
+      >
+        <div id="overlayTitle">⏰ Time's Up!</div>
+        <div class="small" id="overlaySub">
+          Main slider disabled. You may view the answers below or proceed.
+        </div>
+        <div style="display: flex; gap: 8px" id="overlayActions">
+          <!-- buttons injected dynamically -->
+        </div>
+      </div>
+
+      <!-- Small popup for showing one question's answer -->
+      <div
+        class="popup"
+        id="answerPopup"
+        role="dialog"
+        aria-modal="true"
+        aria-hidden="true"
+      >
+        <h4 id="popupTitle">Answer</h4>
+        <div class="body" id="popupBody">...</div>
+        <div class="actions">
+          <button id="popupNext">Next Question</button>
+          <button id="popupClose" class="primary">Close</button>
+        </div>
+      </div>
+
+      <footer>
+        <div class="small" id="log"></div>
+      </footer>
+    </div>
+
+    <script>
+      (() => {
+        // Questions: code-aware entries (code property used when question contains code snippets)
+        const questions = [
+          {
+            text: "What does the <head> tag contain?",
+            options: [
+              "Content displayed on the webpage",
+              "Metadata and links to CSS/JS files",
+              "Main heading of the document",
+              "Footer information",
+            ],
+            correctIndex: 1,
+          },
+          {
+            text: "Which of the following is a semantic HTML element?",
+            options: ["<div>", "<span>", "<section>", "<b>"],
+            correctIndex: 2,
+          },
+          {
+            text: "How do you make each word in a text start with a capital letter?",
+            correctText:
+              "Use CSS 'text-transform: capitalize;' or programmatically transform each word.",
+          },
+          {
+            text: "What is the output of:",
+            code: "console.log(typeof null);",
+            correctText: '"object"',
+          },
+          {
+            text: "What will the following code print?",
+            code: "console.log(2 + '2' - 1);",
+            options: ['"21"', '"221"', "21", "NaN"],
+            correctIndex: 2,
+          },
+          {
+            text: "Which of the following is a microtask?",
+            options: [
+              "setTimeout()",
+              "Promise.then()",
+              "setInterval()",
+              "fetch()",
+            ],
+            correctIndex: 1,
+          },
+          {
+            text: "What is the difference between a Map object and a plain object in JavaScript?",
+            options: [
+              "A Map can only have string keys, while an object can have any type of key.",
+              "A Map maintains the order of insertion of its keys, while an object does not guarantee key order.",
+              "A Map is slower than a plain object for all operations.",
+              "Both Map and object store data exactly the same way.",
+            ],
+            correctIndex: 1,
+          },
+          {
+            text: "What is the difference between <script> placed inside <head> vs <body>?",
+            correctText:
+              "Scripts in head run before body is parsed (unless deferred); placing scripts at end of body lets HTML parse first and can improve perceived load time.",
+          },
+          {
+            text: "Which of the following has the highest specificity?",
+            options: [
+              "Element selector",
+              "Class selector",
+              "ID selector",
+              "Inline style",
+            ],
+            correctIndex: 3,
+          },
+          {
+            text: "Which CSS property is used to control the stacking order of elements?",
+            correctText: "z-index",
+          },
+          {
+            text: "Which pseudo-class targets the first <p> inside a parent element?",
+            options: [
+              "p:first",
+              "p:first-child",
+              "p:first-of-type",
+              "p:first-element",
+            ],
+            correctIndex: 2,
+          },
+          {
+            text: "What is the result of:",
+            code: "console.log([] + []);",
+            correctText: '"" (an empty string)',
+          },
+          {
+            text: "What will this log?",
+            code: "console.log(typeof NaN);",
+            correctText: '"number"',
+          },
+          {
+            text: "What will this log?",
+            code: "console.log([] == ![]);",
+            correctText: "true — due to type coercion",
+          },
+          {
+            text: "What happens if you try to access a non-existent DOM element using getElementById()?",
+            options: [
+              "Throws error",
+              "Returns null",
+              "Returns undefined",
+              "Returns empty string",
+            ],
+            correctIndex: 1,
+          },
+          {
+            text: "Predict the output:",
+            code: "async function test() {\n  return 1;\n}\nconsole.log(test());",
+            correctText: "A Promise resolving to 1 (Promise {<fulfilled>: 1})",
+          },
+          {
+            text: "Which HTML element ignores white spaces and line breaks by default?",
+            correctText: "<pre>",
+          },
+          {
+            text: "Which of the following statements about the <script> tag is true?",
+            options: [
+              "Scripts block HTML parsing by default.",
+              "Scripts with defer execute immediately when encountered.",
+              "Scripts with async preserve execution order.",
+              "Scripts in <head> always run before body is parsed.",
+            ],
+            correctIndex: 0,
+          },
+          {
+            text: "What happens if you have two elements with the same id in HTML and try to target an element by that id?",
+            correctText:
+              "It's invalid HTML; getElementById returns the first matching element.",
+          },
+          {
+            text: "Which of the following selectors has the highest specificity?",
+            options: [
+              "div#app .item > p",
+              "#app p.item",
+              ".app .item p",
+              "p#app.item",
+            ],
+            correctIndex: 3,
+          },
+          {
+            text: "Guess the output for below 2 questions?\n\n1. typeof(typeof (typeof null))\n\n2. typeof NaN === typeof (1 / 'a')",
+            options: [
+              '"string" and true',
+              '"object" and true',
+              '"string" and false',
+              '"undefined" and true',
+            ],
+            correctIndex: 0,
+          },
+
+          {
+            text: "What will this log? (async example)",
+            code: "async function foo() {\n  console.log('1');\n  await Promise.resolve();\n  console.log('2');\n}\nconsole.log('3');\nfoo();\nconsole.log('4');",
+            correctText: "3 1 4 2",
+          },
+          {
+            text: "What will it print?",
+            code: "console.log(1 < 2 < 3);\nconsole.log(3 > 2 > 1);",
+            correctText: "true and false (due to coercion)",
+          },
+          {
+            text: "Bonus Challenge: Explain why the following two lines produce different results:\n1 < 2 < 3     \n3 > 2 > 1     ",
+            correctText:
+              "Because comparisons are evaluated left-to-right and return boolean values. 1 < 2 is true, which when coerced to a number becomes 1; then 1 < 3 is true. For 3 > 2, that's true, coerced to 1; then 1 > 1 is false.",
+          },
+        ];
+
+        // UI refs
+        const qEl = document.getElementById("question");
+        const codeContainer = document.getElementById("codeContainer");
+        const optionsContainer = document.getElementById("optionsContainer");
+        const idxEl = document.getElementById("index");
+        const totalEl = document.getElementById("total");
+        const prevBtn = document.getElementById("prevBtn");
+        const nextBtn = document.getElementById("nextBtn");
+        const progressBar = document.getElementById("progressBar");
+        const bigTimer = document.getElementById("bigTimer");
+        const timerSub = document.getElementById("timerSub");
+        const statusEl = document.getElementById("status");
+        const overlay = document.getElementById("overlay");
+        const overlayActions = document.getElementById("overlayActions");
+        const seeAnswersLink = document.getElementById("seeAnswers");
+        const answersView = document.getElementById("answersView");
+        const answersList = document.getElementById("answersList");
+        const closeAnswers = document.getElementById("closeAnswers");
+        const logEl = document.getElementById("log");
+        const displayAnswerLink = document.getElementById("displayAnswerLink");
+
+        // popup refs
+        const answerPopup = document.getElementById("answerPopup");
+        const popupBody = document.getElementById("popupBody");
+        const popupClose = document.getElementById("popupClose");
+        const popupNext = document.getElementById("popupNext");
+
+        let idx = 0;
+        const TIMER_SECONDS = 100;
+        let timer = null;
+        let timeLeft = TIMER_SECONDS;
+        totalEl.textContent = questions.length;
+
+        function escapeHtml(str) {
+          if (str === undefined || str === null) return "";
+          return String(str)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+        }
+
+        function renderQuestion() {
+          const q = questions[idx];
+          idxEl.textContent = idx + 1;
+          qEl.textContent = q.text || "";
+
+          // code block
+          codeContainer.innerHTML = "";
+          if (q.code) {
+            const pre = document.createElement("pre");
+            pre.className = "code";
+            pre.innerHTML = q.code
+              .split("\n")
+              .map(
+                (ln, i) =>
+                  `<span class="line"><span class="line-number">${i + 1}</span>${escapeHtml(ln)}</span>`,
+              )
+              .join("\n");
+            codeContainer.appendChild(pre);
+            codeContainer.setAttribute("aria-hidden", "false");
+          } else {
+            codeContainer.setAttribute("aria-hidden", "true");
+          }
+
+          // options - display-only
+          optionsContainer.innerHTML = "";
+          if (Array.isArray(q.options) && q.options.length) {
+            const list = document.createElement("div");
+            list.className = "options";
+            q.options.forEach((opt, i) => {
+              const letter = String.fromCharCode(97 + i);
+              const wrapper = document.createElement("div");
+              wrapper.className = "option";
+              const letterEl = document.createElement("div");
+              letterEl.className = "letter";
+              letterEl.textContent = letter + ".";
+              const textEl = document.createElement("div");
+              textEl.className = "text";
+              textEl.innerHTML = escapeHtml(opt);
+              wrapper.appendChild(letterEl);
+              wrapper.appendChild(textEl);
+              list.appendChild(wrapper);
+            });
+            optionsContainer.appendChild(list);
+          } else {
+            // short-answer placeholder
+            const box = document.createElement("div");
+            box.className = "option";
+            const letterEl = document.createElement("div");
+            letterEl.className = "letter";
+            letterEl.textContent = "";
+            const textEl = document.createElement("div");
+            textEl.className = "text";
+            textEl.textContent = "Expected Short Answer";
+            box.appendChild(letterEl);
+            box.appendChild(textEl);
+            optionsContainer.appendChild(box);
+          }
+
+          // See Answers link appears only at last question
+          seeAnswersLink.style.display =
+            idx === questions.length - 1 ? "inline" : "none";
+
+          // update progress bar
+          const pct = Math.round(((idx + 1) / questions.length) * 100);
+          progressBar.style.width = pct + "%";
+
+          // restart timer
+          restartTimer();
+        }
+
+        function restartTimer() {
+          if (timer) clearInterval(timer);
+          timeLeft = TIMER_SECONDS;
+          updateTimerUI();
+          statusEl.textContent = "Status: running";
+          bigTimer.classList.add("pulse");
+          bigTimer.classList.remove("warn");
+          prevBtn.disabled = false;
+          nextBtn.disabled = false;
+          overlay.classList.remove("show");
+          overlay.setAttribute("aria-hidden", "true");
+
+          timer = setInterval(() => {
+            timeLeft--;
+            updateTimerUI();
+            // when time < 15s, add warn class
+            if (timeLeft <= 15) {
+              bigTimer.classList.add("warn");
+            } else {
+              bigTimer.classList.remove("warn");
+            }
+            if (timeLeft <= 0) {
+              clearInterval(timer);
+              onTimeUp();
+            }
+          }, 1000);
+        }
+
+        function updateTimerUI() {
+          bigTimer.textContent = `${timeLeft}s`;
+          // also update timerSub relative message
+          if (timeLeft > 60) timerSub.textContent = "Plenty of time";
+          else if (timeLeft > 15) timerSub.textContent = "Keep going";
+          else timerSub.textContent = "Hurry up!";
+        }
+
+        function onTimeUp() {
+          statusEl.textContent = "Status: time up";
+          bigTimer.classList.remove("pulse");
+          bigTimer.classList.add("warn");
+          // show overlay with two actions: Next Question and Display Answer
+          overlay.classList.add("show");
+          overlay.setAttribute("aria-hidden", "false");
+          prevBtn.disabled = true;
+          nextBtn.disabled = true;
+          seeAnswersLink.style.display = "inline";
+          logEl.textContent = "Timer ended — main slider disabled.";
+
+          // build actions
+          overlayActions.innerHTML = "";
+          const next = document.createElement("button");
+          next.className = "primary";
+          next.textContent = "Next Question";
+          const disp = document.createElement("button");
+          disp.textContent = "Display Answer";
+          overlayActions.appendChild(next);
+          overlayActions.appendChild(disp);
+
+          next.addEventListener("click", () => {
+            // move to next question if exists, else just hide overlay
+            overlay.classList.remove("show");
+            overlay.setAttribute("aria-hidden", "true");
+            if (idx < questions.length - 1) {
+              idx++;
+              renderQuestion();
+            } else {
+              // at last question - keep overlay hidden but don't restart timer
+              statusEl.textContent = "Status: finished";
+              prevBtn.disabled = false;
+              nextBtn.disabled = false;
+            }
+          });
+
+          disp.addEventListener("click", () => {
+            // show answer popup for current question
+            showAnswerPopup();
+          });
+        }
+
+        function buildAnswersView() {
+          answersList.innerHTML = "";
+          questions.forEach((q, qi) => {
+            const item = document.createElement("div");
+            item.className = "answer-item";
+            const qTitle = document.createElement("div");
+            qTitle.className = "answer-q";
+            qTitle.textContent = `${qi + 1}. ${q.text}`;
+            item.appendChild(qTitle);
+            if (q.code) {
+              const pre = document.createElement("pre");
+              pre.className = "code";
+              pre.innerHTML = q.code
+                .split("\n")
+                .map(
+                  (ln, i) =>
+                    `<span class="line"><span class="line-number">${i + 1}</span>${escapeHtml(ln)}</span>`,
+                )
+                .join("\n");
+              item.appendChild(pre);
+            }
+            if (Array.isArray(q.options) && q.options.length) {
+              q.options.forEach((opt, oi) => {
+                const optEl = document.createElement("div");
+                optEl.className = "option";
+                const letterEl = document.createElement("div");
+                letterEl.className = "letter";
+                letterEl.textContent = String.fromCharCode(97 + oi) + ".";
+                const textEl = document.createElement("div");
+                textEl.className = "text";
+                textEl.innerHTML = escapeHtml(opt);
+                optEl.appendChild(letterEl);
+                optEl.appendChild(textEl);
+                if (
+                  typeof q.correctIndex === "number" &&
+                  q.correctIndex === oi
+                ) {
+                  optEl.classList.add("correct");
+                  const mark = document.createElement("span");
+                  mark.className = "answer-correct";
+                  mark.textContent = "✓ correct";
+                  textEl.appendChild(mark);
+                }
+                item.appendChild(optEl);
+              });
+            } else {
+              const corr = document.createElement("div");
+              corr.className = "option correct";
+              corr.style.marginTop = "8px";
+              corr.innerHTML = `<div class="text">${escapeHtml(q.correctText || "—")}</div>`;
+              item.appendChild(corr);
+            }
+            answersList.appendChild(item);
+          });
+        }
+
+        // show answer popup for current question
+        function showAnswerPopup() {
+          const q = questions[idx];
+          let html = "";
+          if (q.code) {
+            html +=
+              '<pre class="code">' +
+              q.code
+                .split("\n")
+                .map(
+                  (ln, i) =>
+                    `<span class="line"><span class="line-number">${i + 1}</span>${escapeHtml(ln)}</span>`,
+                )
+                .join("\n") +
+              "</pre>";
+          }
+          if (Array.isArray(q.options) && q.options.length) {
+            q.options.forEach((opt, oi) => {
+              const letter = String.fromCharCode(97 + oi);
+              html += `<div class="option" style="margin-top:8px"><div class="letter">${letter}.</div><div class="text">${escapeHtml(opt)}</div></div>`;
+              if (typeof q.correctIndex === "number" && q.correctIndex === oi) {
+                html += `<div style="margin-top:6px;color:#b9f6ca;font-weight:800">Correct: ${letter}. ${escapeHtml(opt)}</div>`;
+              }
+            });
+          } else {
+            html += `<div class="option correct" style="margin-top:8px"><div class="text">${escapeHtml(q.correctText || "—")}</div></div>`;
+          }
+
+          popupBody.innerHTML = html;
+          answerPopup.classList.add("show");
+          answerPopup.setAttribute("aria-hidden", "false");
+          // pause timer while viewing answer
+          if (timer) {
+            clearInterval(timer);
+            timer = null;
+          }
+          prevBtn.disabled = false;
+          nextBtn.disabled = false; // allow navigation while popup open
+        }
+
+        function hideAnswerPopup() {
+          answerPopup.classList.remove("show");
+          answerPopup.setAttribute("aria-hidden", "true");
+          // if status is not time up, restart timer
+          if (statusEl.textContent !== "Status: time up") restartTimer();
+        }
+
+        prevBtn.addEventListener("click", () => {
+          if (idx > 0) {
+            idx--;
+            renderQuestion();
+          }
+        });
+        nextBtn.addEventListener("click", () => {
+          if (idx < questions.length - 1) {
+            idx++;
+            renderQuestion();
+          }
+        });
+
+        displayAnswerLink.addEventListener("click", (e) => {
+          e.preventDefault();
+          showAnswerPopup();
+        });
+
+        popupClose.addEventListener("click", () => {
+          hideAnswerPopup();
+        });
+        popupNext.addEventListener("click", () => {
+          // close popup and go to next if possible
+          hideAnswerPopup();
+          if (idx < questions.length - 1) {
+            idx++;
+            renderQuestion();
+          } else {
+            statusEl.textContent = "Status: finished";
+          }
+        });
+
+        seeAnswersLink.addEventListener("click", (e) => {
+          e.preventDefault();
+          if (timer) clearInterval(timer);
+          buildAnswersView();
+          answersView.hidden = false;
+          answersView.setAttribute("aria-hidden", "false");
+          answersView.scrollIntoView({ behavior: "smooth" });
+        });
+
+        closeAnswers.addEventListener("click", () => {
+          answersView.hidden = true;
+          answersView.setAttribute("aria-hidden", "true");
+          if (statusEl.textContent !== "Status: time up") restartTimer();
+          if (statusEl.textContent !== "Status: time up") {
+            prevBtn.disabled = false;
+            nextBtn.disabled = false;
+          }
+        });
+
+        // keyboard nav
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "ArrowLeft") prevBtn.click();
+          if (e.key === "ArrowRight") nextBtn.click();
+          if (e.key === "Escape") {
+            // close popup if open
+            if (answerPopup.classList.contains("show")) hideAnswerPopup();
+            if (overlay.classList.contains("show")) {
+              overlay.classList.remove("show");
+              overlay.setAttribute("aria-hidden", "true");
+            }
+          }
+        });
+
+        // initial render
+        renderQuestion();
+
+        // cleanup timer
+        window.addEventListener("beforeunload", () => {
+          if (timer) clearInterval(timer);
+        });
+      })();
+    </script>
+  </body>
+</html>
