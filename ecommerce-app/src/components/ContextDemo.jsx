@@ -5,13 +5,13 @@ import { useTheme } from "../context/ThemeContext";
 const ContextDemo = () => {
   const { user } = useUser();
   const { theme } = useTheme();
-  return <div>{user.name}
-  
-  <br>
-  </br>
-
-  Current Theme: <span>{theme}</span>
-  </div>;
+  return (
+    <div>
+      {user.name}
+      <br></br>
+      Current Theme: <span>{theme}</span>
+    </div>
+  );
 };
 
 export default ContextDemo;
