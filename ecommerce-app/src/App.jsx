@@ -13,7 +13,7 @@ import Timer from "./components/Timer";
 import DataFetcher from "./components/DataFetcher";
 import ReactDropdown from "./components/ReactDropdown";
 import PostDetails from "./components/PostDetails";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import CommentDetails from "./components/CommentDetails";
 import ContextDemo from "./components/ContextDemo";
 import { useUser } from "./context/Context";
@@ -63,6 +63,41 @@ const HomePage = () => {
         value={input}
       />
     </>
+  );
+};
+
+const UserDashboardPage = () => {
+  return (
+    <div>
+      <div>UserDashboardPage</div>
+    </div>
+  );
+};
+const AdminDashboardPage = () => {
+  return (
+    <div>
+      <div>AdminDashboardPage</div>
+    </div>
+  );
+};
+
+const SettingsDashboardPage = () => {
+  return (
+    <div>
+      <div>SettingsDashboardPage</div>
+    </div>
+  );
+};
+
+const DashboardLayout = () => {
+  return (
+    <div>
+      <header>Navbar</header>
+      <div className="main-section">
+        <Outlet />
+      </div>
+      <footer>Footer</footer>
+    </div>
   );
 };
 
@@ -219,8 +254,12 @@ function App() {
           { label: "PostDetails", path: "/posts" },
           { label: "Hello", path: "/" },
           { label: "context", path: "/context" },
+          { label: "User", path: "/dashboard/users" },
+          { label: "admin", path: "/dashboard/admin" },
+          { label: "settings", path: "/dashboard/settings" },
         ]}
-        variant="secondary"
+        // variant="secondary"
+        showThemeToggler={true}
       />
 
       <Routes>
@@ -230,6 +269,18 @@ function App() {
         <Route path="*" element={<h1>Page not found</h1>} />
 
         <Route path="/context" element={<ContextDemo />} />
+
+        {/* <Route path="/dashboard/users" element={<UserDashboardPage />} />
+        <Route path="/dashboard/admin" element={<AdminDashboardPage />} />
+        <Route path="/dashboard/settings" element={<SettingsDashboardPage />} /> */}
+
+        <Route path="dashboard" element={<DashboardLayout />}>
+          {/* <Route index element={<UserDashboardPage />} />  */}
+          <Route index element={<Navigate to="users"/>} />
+          <Route path="users" element={<UserDashboardPage />} />
+          <Route path="admin" element={<AdminDashboardPage />} />
+          <Route path="settings" element={<SettingsDashboardPage />} />
+        </Route>
       </Routes>
 
       {/* <input type="text" value={input} onChange={autoSaveTrotling} />
