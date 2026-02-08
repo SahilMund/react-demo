@@ -11,8 +11,6 @@ const CommentDetails = () => {
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  console.log('location', location.state)
-
   const fetchData = async () => {
     const response = await fetch(`${API_URL}?postId=${postId}`);
     const data = await response.json();

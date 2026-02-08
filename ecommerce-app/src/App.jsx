@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
@@ -17,6 +17,11 @@ import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import CommentDetails from "./components/CommentDetails";
 import ContextDemo from "./components/ContextDemo";
 import { useUser } from "./context/Context";
+import UseRefDemo from "./components/UseRefDemo";
+import LogInPage from "./components/LogInPage";
+import ProtectedRoute from "./components/ProtectedRoute";
+import DashboardLayout from "./components/PageLayout";
+import { AuthContext } from "./context/AuthContext";
 
 const postInfo = [
   {
@@ -89,23 +94,25 @@ const SettingsDashboardPage = () => {
   );
 };
 
-const DashboardLayout = () => {
-  return (
-    <div>
-      <header>Navbar</header>
-      <div className="main-section">
-        <Outlet />
-      </div>
-      <footer>Footer</footer>
-    </div>
-  );
-};
+// const DashboardLayout = () => {
+//   return (
+//     <div>
+//       <header>Navbar</header>
+// <div className="main-section">
+//   <Outlet />
+// </div>
+//       <footer>Footer</footer>
+//     </div>
+//   );
+// };
 
 function App() {
   const [count, setCount] = useState(2);
   const [width, setWidth] = useState(0);
   const [posts, setPosts] = useState(postInfo);
   const [isTimerActive, setIsTimerActive] = useState(false);
+
+  const { login, user: userAuthData } = useContext(AuthContext);
 
   const [user, setUser] = useState({
     name: "John",
@@ -250,20 +257,45 @@ function App() {
   return (
     <>
       <Navbar
-        links={[
-          { label: "PostDetails", path: "/posts" },
-          { label: "Hello", path: "/" },
-          { label: "context", path: "/context" },
-          { label: "User", path: "/dashboard/users" },
-          { label: "admin", path: "/dashboard/admin" },
-          { label: "settings", path: "/dashboard/settings" },
-        ]}
+        // links={
+        //   userAuthData
+        //     ? [
+        //         { label: "User", path: "/dashboard/users" },
+        //         { label: "admin", path: "/dashboard/admin" },
+        //         { label: "settings", path: "/dashboard/settings" },
+        //       ]
+        //     : [{ label: "login", path: "/login" }]
+
+        links={
+          [
+            ...(!userAuthData ? [{ label: "login", path: "/login" }] : []),
+            ...(userAuthData
+              ? [
+                  { label: "User", path: "/dashboard/users" },
+                  { label: "admin", path: "/dashboard/admin" },
+                  { label: "settings", path: "/dashboard/settings" },
+                ]
+              : []),
+          ]
+          // [
+
+          // { label: "PostDetails", path: "/posts" },
+          // { label: "Hello", path: "/" },
+          // { label: "context", path: "/context" },
+
+          // { label: "login", path: "/login" },
+          // { label: "User", path: "/dashboard/users" },
+          // { label: "admin", path: "/dashboard/admin" },
+          // { label: "settings", path: "/dashboard/settings" },
+          // ]
+        }
         // variant="secondary"
         showThemeToggler={true}
       />
 
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<UseRefDemo />} />
+        <Route path="/login" element={<LogInPage />} />
         <Route path="/posts" element={<PostDetails />} />
         <Route path="/comments/:postId" element={<CommentDetails />} />
         <Route path="*" element={<h1>Page not found</h1>} />
@@ -274,9 +306,16 @@ function App() {
         <Route path="/dashboard/admin" element={<AdminDashboardPage />} />
         <Route path="/dashboard/settings" element={<SettingsDashboardPage />} /> */}
 
-        <Route path="dashboard" element={<DashboardLayout />}>
+        <Route
+          path="dashboard"
+          element={
+            <ProtectedRoute>
+              <DashboardLayout />
+            </ProtectedRoute>
+          }
+        >
           {/* <Route index element={<UserDashboardPage />} />  */}
-          <Route index element={<Navigate to="users"/>} />
+          <Route index element={<Navigate to="users" />} />
           <Route path="users" element={<UserDashboardPage />} />
           <Route path="admin" element={<AdminDashboardPage />} />
           <Route path="settings" element={<SettingsDashboardPage />} />
