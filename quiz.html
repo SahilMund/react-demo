@@ -480,7 +480,7 @@
     <script>
       (() => {
         // Questions: code-aware entries (code property used when question contains code snippets)
-        const questions = [
+        const jsQuestions = [
           {
             text: "What does the <head> tag contain?",
             options: [
@@ -648,6 +648,343 @@
           },
         ];
 
+        const reactQuestions = [
+          {
+            text: "What is the primary purpose of props in React?",
+            options: [
+              "To manage internal component data",
+              "To pass data from parent to child components",
+              "To store global state",
+              "To modify DOM directly",
+            ],
+            correctIndex: 1,
+          },
+          {
+            text: "What is state in React?",
+            options: [
+              "Immutable input passed to components",
+              "Data that determines component behavior and can change over time",
+              "A global storage system",
+              "A CSS state",
+            ],
+            correctIndex: 1,
+          },
+          {
+            text: "Which hook is used to manage local component state?",
+            options: ["useEffect", "useRef", "useState", "useContext"],
+            correctIndex: 2,
+          },
+          {
+            text: "What does useEffect primarily handle?",
+            options: [
+              "Rendering JSX",
+              "Side effects like API calls and subscriptions",
+              "State initialization",
+              "Routing",
+            ],
+            correctIndex: 1,
+          },
+          {
+            text: "When does useEffect run if dependency array is empty?",
+            options: [
+              "On every render",
+              "Only once after initial render",
+              "Before render",
+              "Never",
+            ],
+            correctIndex: 1,
+          },
+          {
+            text: "What is the purpose of useRef?",
+            options: [
+              "To trigger re-renders",
+              "To persist values between renders without causing re-render",
+              "To manage global state",
+              "To replace useState",
+            ],
+            correctIndex: 1,
+          },
+          {
+            text: "Which statement about useRef is correct?",
+            options: [
+              "Updating ref causes re-render",
+              "Ref values reset on every render",
+              "Updating ref does not trigger re-render",
+              "Ref can only store DOM nodes",
+            ],
+            correctIndex: 2,
+          },
+          {
+            text: "What problem does Context API solve?",
+            options: [
+              "Routing between pages",
+              "Avoiding prop drilling",
+              "Managing animations",
+              "Improving CSS performance",
+            ],
+            correctIndex: 1,
+          },
+          {
+            text: "In Context API, which component provides data to children?",
+            options: ["Consumer", "Provider", "Reducer", "Dispatcher"],
+            correctIndex: 1,
+          },
+          {
+            text: "What is an advanced use of Context API?",
+            options: [
+              "Replacing all local state",
+              "Managing global state with reducers and multiple contexts",
+              "Rendering components faster",
+              "Handling routing",
+            ],
+            correctIndex: 1,
+          },
+          {
+            text: "What is React Router used for?",
+            options: [
+              "Managing component state",
+              "Handling navigation between views without page reload",
+              "Making API calls",
+              "Managing context",
+            ],
+            correctIndex: 1,
+          },
+          {
+            text: "Which component is used to define routes in React Router v6?",
+            options: ["Switch", "Router", "Routes", "Navigate"],
+            correctIndex: 2,
+          },
+          {
+            text: "What is the Virtual DOM?",
+            options: [
+              "A copy of real DOM kept in memory",
+              "A browser API",
+              "A CSS rendering engine",
+              "A database layer",
+            ],
+            correctIndex: 0,
+          },
+          {
+            text: "What is React's diffing algorithm used for?",
+            options: [
+              "Comparing two components for equality",
+              "Comparing virtual DOM trees to update only changed parts",
+              "Optimizing CSS",
+              "Managing routing",
+            ],
+            correctIndex: 1,
+          },
+          {
+            text: "What happens during reconciliation in React?",
+            correctText:
+              "React compares the new Virtual DOM with the previous one and updates only the changed parts in the real DOM.",
+          },
+          {
+            text: "Why should state not be mutated directly?",
+            options: [
+              "React cannot detect changes properly",
+              "It improves performance",
+              "It reduces memory usage",
+              "It avoids hooks",
+            ],
+            correctIndex: 0,
+          },
+          {
+            text: "What is a common project session best practice in React?",
+            options: [
+              "Keeping all logic in one component",
+              "Separating components, hooks, and services for maintainability",
+              "Avoiding reusable components",
+              "Using only class components",
+            ],
+            correctIndex: 1,
+          },
+          {
+            text: "What is the difference between props and state?",
+            correctText:
+              "Props are read-only inputs passed from parent components, while state is managed internally and can change over time.",
+          },
+          {
+            text: "Which hook is commonly used with Context API to consume context?",
+            options: ["useState", "useReducer", "useContext", "useMemo"],
+            correctIndex: 2,
+          },
+          {
+            text: "What is the main advantage of React’s Virtual DOM?",
+            correctText:
+              "It improves performance by minimizing direct DOM manipulation through efficient updates.",
+          },
+        ];
+
+        const reactQ2 = [
+          {
+            text: "What is the main purpose of keys in React lists?",
+            options: [
+              "To style elements",
+              "To uniquely identify elements for efficient updates",
+              "To store component state",
+              "To improve CSS rendering",
+            ],
+            correctIndex: 1,
+          },
+          {
+            text: "What happens if keys are not provided in a list?",
+            options: [
+              "React throws an error",
+              "Rendering stops",
+              "React may re-render inefficiently",
+              "Nothing happens",
+            ],
+            correctIndex: 2,
+          },
+          {
+            text: "Which hook is used to access context values?",
+            options: ["useState", "useReducer", "useContext", "useEffect"],
+            correctIndex: 2,
+          },
+          {
+            text: "What is prop drilling?",
+            correctText:
+              "Passing data through multiple intermediate components just to reach a deeply nested child component.",
+          },
+          {
+            text: "Which hook is useful for storing mutable values without causing re-renders?",
+            options: ["useState", "useEffect", "useRef", "useContext"],
+            correctIndex: 2,
+          },
+          {
+            text: "When does a component re-render?",
+            options: [
+              "When props change",
+              "When state changes",
+              "When parent re-renders",
+              "All of the above",
+            ],
+            correctIndex: 3,
+          },
+          {
+            text: "What is reconciliation in React?",
+            options: [
+              "Updating CSS styles",
+              "Comparing old and new Virtual DOM trees",
+              "Handling routing",
+              "Managing state",
+            ],
+            correctIndex: 1,
+          },
+          {
+            text: "Which method prevents unnecessary re-renders in functional components?",
+            options: ["React.memo", "useState", "useRef", "useEffect"],
+            correctIndex: 0,
+          },
+          {
+            text: "What is the default behavior of useEffect without dependency array?",
+            options: [
+              "Runs once",
+              "Runs on every render",
+              "Never runs",
+              "Runs only on unmount",
+            ],
+            correctIndex: 1,
+          },
+          {
+            text: "Which hook can be used for cleanup operations?",
+            options: [
+              "useState",
+              "useEffect return function",
+              "useRef",
+              "useContext",
+            ],
+            correctIndex: 1,
+          },
+          {
+            text: "What does React Router's <Link> component do?",
+            options: [
+              "Reloads the page",
+              "Navigates without page reload",
+              "Fetches API data",
+              "Stores route state",
+            ],
+            correctIndex: 1,
+          },
+          {
+            text: "Which hook is commonly used for accessing route parameters?",
+            options: ["useParams", "useRoute", "useNavigate", "useLocation"],
+            correctIndex: 0,
+          },
+          {
+            text: "What is lifting state up?",
+            correctText:
+              "Moving shared state to the closest common parent component so multiple children can access it.",
+          },
+          {
+            text: "What is JSX?",
+            options: [
+              "A templating engine",
+              "A syntax extension that allows writing HTML inside JavaScript",
+              "A CSS framework",
+              "A database query language",
+            ],
+            correctIndex: 1,
+          },
+          {
+            text: "Why should side effects not be placed directly inside component body?",
+            options: [
+              "They block rendering",
+              "They run on every render unintentionally",
+              "They break JSX",
+              "They stop state updates",
+            ],
+            correctIndex: 1,
+          },
+          {
+            text: "What is the purpose of dependency array in useEffect?",
+            options: [
+              "To define state variables",
+              "To control when effect runs",
+              "To improve styling",
+              "To define routes",
+            ],
+            correctIndex: 1,
+          },
+          {
+            text: "Which of the following is true about React state updates?",
+            options: [
+              "They are always synchronous",
+              "They may be batched for performance",
+              "They immediately update DOM",
+              "They reload the component",
+            ],
+            correctIndex: 1,
+          },
+          {
+            text: "What is a controlled component?",
+            correctText:
+              "A component where form data is controlled by React state.",
+          },
+          {
+            text: "What is the benefit of functional components over class components?",
+            options: [
+              "Less readable",
+              "Hooks allow cleaner state and lifecycle handling",
+              "They are slower",
+              "They cannot use state",
+            ],
+            correctIndex: 1,
+          },
+          {
+            text: "What does React aim to optimize?",
+            options: [
+              "Database performance",
+              "DOM manipulation efficiency",
+              "Network calls",
+              "CSS animations",
+            ],
+            correctIndex: 1,
+          },
+        ];
+
+        const questions = [...reactQuestions, ...reactQ2];
         // UI refs
         const qEl = document.getElementById("question");
         const codeContainer = document.getElementById("codeContainer");
