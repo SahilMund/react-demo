@@ -1,7 +1,6 @@
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import viteLogo from "/vite.svg";
 import { Moon, Sun } from "lucide-react";
-import { useState } from "react";
 import { useTheme } from "../context/ThemeContext";
 
 function Navbar({
@@ -9,6 +8,8 @@ function Navbar({
   logo = viteLogo,
   variant = "primary",
   showThemeToggler,
+  showLogout,
+  onLogout
 }) {
   const { theme, setTheme } = useTheme();
 
@@ -40,15 +41,11 @@ function Navbar({
           {theme !== "dark" ? <Moon size="16px" /> : <Sun size="16px" />}
         </button>
       )}
+
+      {showLogout && <button onClick={onLogout}>Logout</button>}
     </div>
   );
 }
 
 export default Navbar;
 
-// {
-//     span: 4,
-//     btn: "update count"
-// }
-
-// {}

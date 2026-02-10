@@ -1,19 +1,21 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { useContext } from "react";
+
 const LogInPage = () => {
   const [loginDetails, setLoginDetails] = useState({
     name: "",
     email: "",
   });
 
+  const nameRef = useRef(null);
+
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
   const handleChange = (e) => {
-    // setLoginDetails({...loginDetails, [e.target.name]: e.target.value});
     setLoginDetails((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
@@ -25,11 +27,17 @@ const LogInPage = () => {
       alert("Please fill all the details");
     }
   };
+
+  useEffect(() => {
+    nameRef.current.focus();
+  }, []);
+
   return (
     <div>
       <input
         type="text"
         name="name"
+        ref={nameRef}
         value={loginDetails.name}
         onChange={handleChange}
       />

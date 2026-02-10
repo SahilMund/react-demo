@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
-import { useUser } from "../context/Context";
-import { useTheme } from "../context/ThemeContext";
+import { useUser } from "../../context/Context";
+import { useTheme } from "../../context/ThemeContext";
 
 const ContextDemo = () => {
   const { user } = useUser();
