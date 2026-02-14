@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import AppDemo from "./AppDemo";
 import { Navigate, Route, Routes } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -6,8 +6,26 @@ import LogInPage from "./components/LogInPage";
 import DashboardLayout from "./components/PageLayout";
 import { AuthContext } from "./context/AuthContext";
 import Navbar from "./components/Navbar";
+import SignupPage from "./components/SignUpPage";
+import axios from "axios";
 
 const UserDashboardPage = () => {
+  useEffect(() => {
+    async function getUserProfile() {
+      try {
+        const res = await axios.get("http://localhost:8080/api/user/profile", {
+          withCredentials: true,
+        });
+
+        console.log("res", res.data);
+      } catch (error) {
+        console.error(error);
+        alert("Error occured");
+      }
+    }
+
+    getUserProfile();
+  }, []);
   return (
     <div>
       <div>UserDashboardPage</div>
@@ -37,7 +55,12 @@ const App = () => {
     <div>
       <Navbar
         links={[
-          ...(!userAuthData ? [{ label: "login", path: "/login" }] : []),
+          ...(!userAuthData
+            ? [
+                { label: "login", path: "/login" },
+                { label: "signup", path: "/signup" },
+              ]
+            : []),
           ...(userAuthData
             ? [
                 { label: "User", path: "/dashboard/users" },
@@ -53,6 +76,8 @@ const App = () => {
       />
       <Routes>
         <Route path="/login" element={<LogInPage />} />
+        <Route path="/" element={<h2>Landing page</h2>} />
+        <Route path="/signup" element={<SignupPage />} />
         <Route path="*" element={<h1>Page not found</h1>} />
         <Route
           path="dashboard"

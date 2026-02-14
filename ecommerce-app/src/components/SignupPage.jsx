@@ -5,10 +5,11 @@ import { AuthContext } from "../context/AuthContext";
 import { useContext } from "react";
 import axios from "axios";
 
-const LogInPage = () => {
-  const [loginDetails, setLoginDetails] = useState({
-    password: "",
+const SignupPage = () => {
+  const [form, setForm] = useState({
+    name: "",
     email: "",
+    password: "",
   });
 
   const nameRef = useRef(null);
@@ -17,26 +18,25 @@ const LogInPage = () => {
   const { login } = useContext(AuthContext);
 
   const handleChange = (e) => {
-    setLoginDetails((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleLogin = async () => {
-    if (!loginDetails.email || !loginDetails.password) {
+  const handleRegister = async () => {
+    if (!form.name || !form.email || !form.password) {
       alert("Fill required details");
       return;
     }
+
     try {
-      const res = await axios.post(
-        "http://localhost:8080/api/auth/login",
-        loginDetails,
-        {
-          withCredentials: true,
-        },
-      );
+      const res = await axios.post("http://localhost:8080/api/auth/register", {
+        name: form.name,
+        email: form.email,
+        password: form.password,
+      });
 
       console.log("res", res.data);
-      login(res.data.token);
-      navigate("/dashboard/users");
+      alert(res.data.message)
+      navigate("/login")
     } catch (error) {
       console.error(error);
       alert("Error occured");
@@ -50,24 +50,30 @@ const LogInPage = () => {
   return (
     <div>
       <input
+        type="text"
+        name="name"
+        ref={nameRef}
+        value={form.name}
+        placeholder="enter name"
+        onChange={handleChange}
+      />
+      <input
         type="email"
         name="email"
-        value={loginDetails.email}
+        value={form.email}
         placeholder="enter email"
         onChange={handleChange}
       />
       <input
         type="password"
         name="password"
-        ref={nameRef}
-        value={loginDetails.password}
+        value={form.password}
         onChange={handleChange}
         placeholder="enter password"
       />
-
-      <button onClick={handleLogin}>Login</button>
+      <button onClick={handleRegister}>Register</button>
     </div>
   );
 };
 
-export default LogInPage;
+export default SignupPage;

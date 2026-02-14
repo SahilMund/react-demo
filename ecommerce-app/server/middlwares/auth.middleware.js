@@ -1,22 +1,22 @@
-import User from "../models/user.model.js";
+import { veriyToken } from "../utils/token.util.js";
 
 const authMiddleware = async (req, res, next) => {
   try {
-    const token = req.headers.authorization;
-
+    const token = req.cookies.auth_token_cookie;
+    // const token = req.headers.authorization;
     if (!token) {
       return res
         .status(401)
         .json({ message: "No token Provided", shouldRedirectLogin: true });
     }
 
-    const user = await User.findOne({ token });
+    var decoded = veriyToken(token);
 
-    if (!user) {
+    if (!decoded) {
       return res.status(401).json({ message: "Invalid token" });
     }
 
-    req.user = user;
+    req.user = decoded;
     next();
   } catch (error) {
     console.log(error);

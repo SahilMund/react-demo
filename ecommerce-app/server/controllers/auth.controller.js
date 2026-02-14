@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import { generateToken } from "../utils/token.util.js";
+import { sendResponse } from "../utils/response.util.js";
 
 const SALT_ROUNDS = 10;
 
@@ -69,14 +70,22 @@ export const login = async (req, res) => {
     }
 
     // generate the token and send it to the UI
+    const token = generateToken({
+      name: user.name,
+      email: user.email,
+      id: user._id,
+    });
 
-    const token = generateToken();
-    user.token = token;
-    await user.save();
+    res.cookie("auth_token_cookie", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      maxAge: "",
+    });
 
     res.status(200).json({ message: "User loggedIn successfully!!", token });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: error.message });
+    sendResponse({ res, message: error.message });
   }
 };
